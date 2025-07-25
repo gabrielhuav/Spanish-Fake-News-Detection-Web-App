@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    container_name: analizador_noticias_app
+    ports:
+      - "5000:5000"
+    image: analizador-noticias:latest

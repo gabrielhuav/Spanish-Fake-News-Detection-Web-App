@@ -1,0 +1,24 @@
+# -- Framework Web (Flask, compatible con el stack de ML) --
+Flask==2.0.1
+Jinja2==3.0.1
+Werkzeug==2.0.1
+itsdangerous==2.0.1
+click==8.0.1
+
+# -- Stack de Machine Learning (Estable y del Ejemplo) --
+tensorflow==2.4.0
+transformers==4.9.2
+huggingface-hub==0.0.12
+tokenizers==0.10.3
+numpy==1.19.5
+sacremoses==0.0.45
+torch==1.9.0
+
+# -- Librerías de Web Scraping y Dependencias --
+requests==2.26.0
+beautifulsoup4==4.12.2
+filelock==3.0.12
+packaging==21.0
+pyyaml==5.4.1
+regex==2021.8.3
+tqdm==4.62.1

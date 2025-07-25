@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Analizador de Noticias</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: auto; padding: 20px; background-color: #f4f4f9; color: #333; }
+        h1, h2 { color: #2c3e50; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input[type="text"] { width: 70%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; font-size: 16px; color: white; background-color: #3498db; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #2980b9; }
+        .results { margin-top: 30px; }
+        .verdict { padding: 20px; border-radius: 5px; text-align: center; font-size: 24px; font-weight: bold; color: white; }
+        .verdict.real { background-color: #2ecc71; }
+        .verdict.fake { background-color: #e74c3c; }
+        .verdict.unknown { background-color: #f39c12; }
+        iframe { width: 100%; height: 400px; border: 1px solid #ddd; margin-top: 20px; }
+        details { margin-top: 20px; border: 1px solid #ddd; border-radius: 4px; padding: 10px; }
+        summary { font-weight: bold; cursor: pointer; }
+        pre { background-color: #ecf0f1; padding: 10px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Analizador de Fraude Digital</h1>
+        
+        <form action="/" method="post">
+            <input type="text" name="url" placeholder="Pega una URL de noticia aquí..." required>
+            <button type="submit">Analizar</button>
+        </form>
+
+        {% if veredicto %}
+        <div class="results">
+            <h2>Resultados del Análisis</h2>
+            <div class="verdict {{ 'real' if 'REAL' in veredicto else 'fake' if 'FALSO' in veredicto else 'unknown' }}">
+                {{ veredicto }} (Confianza: {{ confianza }})
+            </div>
+
+            <details>
+                <summary>Ver el Texto Exacto Analizado por el Modelo</summary>
+                <pre><code>{{ texto_analizado_modelo|e }}</code></pre>
+            </details>
+
+            <h2>Vista Previa del Sitio</h2>
+            <p><small><strong>Advertencia:</strong> La vista previa de abajo es un iframe del sitio externo. No interactúes con él si no confías en la fuente.</small></p>
+            <iframe src="{{ url_analizada }}" title="Vista Previa del Sitio"></iframe>
+            
+            <details>
+                <summary>Ver Contenido HTML Completo</summary>
+                <pre><code>{{ texto_completo_html|e }}</code></pre>
+            </details>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
