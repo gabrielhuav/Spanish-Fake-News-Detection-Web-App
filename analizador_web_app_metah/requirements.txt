@@ -1,0 +1,14 @@
+# -- Framework Web (versiones estables) --
+Flask==2.2.2
+Jinja2==3.1.2
+Werkzeug==2.2.2
+
+# -- Stack de Machine Learning (VERSIONES ACTUALIZADAS Y COMPATIBLES) --
+scikit-learn==1.6.1
+joblib==1.4.2
+numpy==1.26.4
+nltk==3.8.1
+
+# -- Librerías de Web Scraping --
+requests==2.31.0
+beautifulsoup4==4.12.2

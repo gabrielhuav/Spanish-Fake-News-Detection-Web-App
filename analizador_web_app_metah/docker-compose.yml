@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    container_name: analizador_recocido_app
+    ports:
+      - "5001:5000"
+    image: analizador-recocido:latest
