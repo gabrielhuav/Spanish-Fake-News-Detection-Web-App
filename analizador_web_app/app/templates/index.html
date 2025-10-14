@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
-    <title>Analizador de Noticias</title>
+    <title>{{ t.title }}</title>
     <style>
         body { font-family: sans-serif; max-width: 900px; margin: auto; padding: 20px; background-color: #f4f4f9; color: #333; }
         h1, h2 { color: #2c3e50; }
         .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        input[type="text"] { width: 70%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        input[type="text"], textarea { width: calc(100% - 24px); padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px; }
+        textarea { height: 150px; resize: vertical; }
         button { padding: 10px 20px; font-size: 16px; color: white; background-color: #3498db; border: none; border-radius: 4px; cursor: pointer; }
         button:hover { background-color: #2980b9; }
         .results { margin-top: 30px; }
@@ -19,39 +20,82 @@
         details { margin-top: 20px; border: 1px solid #ddd; border-radius: 4px; padding: 10px; }
         summary { font-weight: bold; cursor: pointer; }
         pre { background-color: #ecf0f1; padding: 10px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word; }
+        .lang-switcher { text-align: right; margin-bottom: 10px; }
+        .input-toggle { margin-top: 10px; text-align: center; }
+        .input-toggle a { color: #3498db; cursor: pointer; text-decoration: underline; }
+        #manual-input-container { display: none; } /* Oculto por defecto */
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Analizador de Fraude Digital</h1>
+        <div class="lang-switcher">
+            <a href="?lang=es">Español</a> | <a href="?lang=en">English</a>
+        </div>
+
+        <h1>{{ t.title_english }}</h1>
         
-        <form action="/" method="post">
-            <input type="text" name="url" placeholder="Pega una URL de noticia aquí..." required>
-            <button type="submit">Analizar</button>
-        </form>
+        <div id="url-input-container">
+            <form action="/?lang={{ lang }}" method="post">
+                <input type="text" name="url" placeholder="{{ t.url_placeholder }}" required>
+                <button type="submit">{{ t.analyze_button }}</button>
+            </form>
+            <div class="input-toggle">
+                <a onclick="toggleInputMode()">{{ 'O ingresa el texto manualmente' if lang == 'es' else 'Or enter text manually' }}</a>
+            </div>
+        </div>
+
+        <div id="manual-input-container">
+            <form action="/?lang={{ lang }}" method="post">
+                <input type="text" name="text_title" placeholder="{{ t.text_title_placeholder }}" required><br>
+                <textarea name="text_content" placeholder="{{ t.text_content_placeholder }}" required></textarea><br>
+                <button type="submit">{{ t.analyze_button }}</button>
+            </form>
+            <div class="input-toggle">
+                 <a onclick="toggleInputMode()">{{ 'O analiza desde una URL' if lang == 'es' else 'Or analyze from a URL' }}</a>
+            </div>
+        </div>
 
         {% if veredicto %}
         <div class="results">
-            <h2>Resultados del Análisis</h2>
+            <h2>{{ t.results_title }}</h2>
             <div class="verdict {{ 'real' if 'REAL' in veredicto else 'fake' if 'FALSO' in veredicto else 'unknown' }}">
-                {{ veredicto }} (Confianza: {{ confianza }})
+                {% if 'REAL' in veredicto %}{{ t.verdict_real }}{% elif 'FALSO' in veredicto %}{{ t.verdict_fake }}{% elif 'INSUFICIENTE' in veredicto %}{{ t.verdict_insufficient }}{% else %}{{ t.verdict_error }}{% endif %} 
+                ({{ t.confidence_label }}: {{ confianza }})
             </div>
 
             <details>
-                <summary>Ver el Texto Exacto Analizado por el Modelo</summary>
+                <summary>{{ t.analyzed_text_label }}</summary>
                 <pre><code>{{ texto_analizado_modelo|e }}</code></pre>
             </details>
 
-            <h2>Vista Previa del Sitio</h2>
-            <p><small><strong>Advertencia:</strong> La vista previa de abajo es un iframe del sitio externo. No interactúes con él si no confías en la fuente.</small></p>
+            {% if url_analizada %}
+            <h2>{{ t.preview_title }}</h2>
+            <p><small><strong>{{ t.preview_warning }}</strong></small></p>
             <iframe src="{{ url_analizada }}" title="Vista Previa del Sitio"></iframe>
             
             <details>
-                <summary>Ver Contenido HTML Completo</summary>
+                <summary>{{ t.html_content_label }}</summary>
                 <pre><code>{{ texto_completo_html|e }}</code></pre>
             </details>
+            {% endif %}
         </div>
         {% endif %}
     </div>
+
+    <script>
+        function toggleInputMode() {
+            const urlContainer = document.getElementById('url-input-container');
+            const manualContainer = document.getElementById('manual-input-container');
+
+            if (urlContainer.style.display === 'none') {
+                urlContainer.style.display = 'block';
+                manualContainer.style.display = 'none';
+            } else {
+                urlContainer.style.display = 'none';
+                manualContainer.style.display = 'block';
+            }
+        }
+    </script>
+
 </body>
 </html>
