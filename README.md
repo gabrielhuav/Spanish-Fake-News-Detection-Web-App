@@ -9,6 +9,22 @@ This project presents a solution using a Language Model for the detection of fak
 
 The objective of this research is to apply Natural Language Processing (NLP) and deep learning techniques to build a tool capable of discerning between real and fake news. The process includes data collection and unification, fine-tuning of a pre-trained Transformer model, and the implementation of an interactive web application for practical use.
 
+## System Architecture
+
+### Components Diagram
+<img width="1716" height="1076" alt="image" src="https://github.com/user-attachments/assets/1541ba6f-0ea5-4eee-9823-f9f405c17255" />
+
+The system consists of three main components:
+- **Web Interface (Flask):** Handles user requests and displays results
+- **Text Processor:** Extracts and preprocesses text from news URLs
+- **Classification Model (DistilBERT):** Analyzes the text and predicts authenticity
+
+### Sequence Diagram
+
+<img width="1477" height="1290" alt="image" src="https://github.com/user-attachments/assets/9e0946fe-37a8-408b-acf9-b2fdc2f39a97" />
+
+The diagram above illustrates the complete flow from when a user submits a URL until they receive the classification result, showing the interaction between all system components.
+
 ## Related Repository
 
 For the complete model training process, dataset preparation, and hyperparameter tuning, please visit the training repository:
@@ -55,6 +71,10 @@ This repository contains:
 │       ├── tokenizer.json
 │       ├── vocab.txt
 │       └── ...                      # Other model files
+│
+├── images/                          # Documentation images
+│   ├── components-diagram.png
+│   └── sequence-diagram.png
 │
 ├── Dockerfile                       # The recipe to build the container
 ├── docker-compose.yml               # The orchestrator to run the app
