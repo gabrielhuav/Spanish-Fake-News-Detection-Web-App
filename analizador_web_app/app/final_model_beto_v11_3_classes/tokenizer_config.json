@@ -1,0 +1,16 @@
+{
+  "cls_token": "[CLS]",
+  "do_basic_tokenize": true,
+  "do_lower_case": false,
+  "mask_token": "[MASK]",
+  "model_max_length": 512,
+  "name_or_path": "dccuchile/bert-base-spanish-wwm-cased",
+  "never_split": null,
+  "pad_token": "[PAD]",
+  "sep_token": "[SEP]",
+  "special_tokens_map_file": "C:\\Users\\gabri/.cache\\huggingface\\hub\\models--dccuchile--bert-base-spanish-wwm-cased\\snapshots\\c4d86612f51b4f46759c8390d1798c2febe71b93\\special_tokens_map.json",
+  "strip_accents": false,
+  "tokenize_chinese_chars": true,
+  "tokenizer_class": "BertTokenizer",
+  "unk_token": "[UNK]"
+}
