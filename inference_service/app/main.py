@@ -8,18 +8,19 @@ from flask import Flask, request, render_template
 
 # --- CONFIGURACIÓN ---
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-MODELO_GUARDADO_PATH = './modelo_final_distilbert_es'
+# Ruta actualizada a la nueva estructura profesional
+MODELO_GUARDADO_PATH = './models/beto_v11_3_classes'
 
 # --- INICIALIZACIÓN DE LA APP ---
 app = Flask(__name__)
 
 # --- CARGA DEL MODELO Y TOKENIZADOR ---
-print("Cargando modelo y tokenizador desde el disco...")
+print("Cargando modelo BETO y tokenizador desde el disco...")
 tokenizer = AutoTokenizer.from_pretrained(MODELO_GUARDADO_PATH)
 model = TFAutoModelForSequenceClassification.from_pretrained(MODELO_GUARDADO_PATH)
 print("✅ Sistema listo para recibir peticiones.")
 
-# --- TRADUCCIONES ---
+# --- TRADUCCIONES ---[cite: 10]
 translations = {
     'es': {
         'title': 'Analizador de Fraude Digital',
@@ -31,6 +32,7 @@ translations = {
         'results_title': 'Resultados del Análisis',
         'verdict_real': 'REAL',
         'verdict_fake': 'FALSO',
+        'verdict_satire': 'SATÍRICO',  # Añadido para la clase 3
         'verdict_insufficient': 'INSUFICIENTE TEXTO',
         'verdict_error': 'ERROR DE ANÁLISIS',
         'confidence_label': 'Confianza',
@@ -49,6 +51,7 @@ translations = {
         'results_title': 'Analysis Results',
         'verdict_real': 'REAL',
         'verdict_fake': 'FAKE',
+        'verdict_satire': 'SATIRE',  # Añadido para la clase 3
         'verdict_insufficient': 'INSUFFICIENT TEXT',
         'verdict_error': 'ANALYSIS ERROR',
         'confidence_label': 'Confidence',
@@ -78,16 +81,24 @@ def extraer_texto_url(url: str):
 
 def predecir_noticia(titulo: str, texto: str):
     if not texto or not texto.strip():
-        return "INSUFFICIENTE TEXTO", "0.00%", ""
+        return "INSUFICIENTE TEXTO", "0.00%", ""
 
     texto_combinado = titulo + " [SEP] " + texto
-    inputs = tokenizer(texto_combinado, return_tensors="tf", truncation=True, padding=True, max_length=256)
+    # max_length sube a 512 para aprovechar la capacidad completa de BETO[cite: 1]
+    inputs = tokenizer(texto_combinado, return_tensors="tf", truncation=True, padding=True, max_length=512)
     logits = model(inputs).logits
     probabilidades = tf.nn.softmax(logits, axis=1)[0].numpy()
     
     clase_predicha = np.argmax(probabilidades)
     confianza = probabilidades[clase_predicha]
-    resultado = "REAL" if clase_predicha == 1 else "FALSO"
+    
+    # Mapeo actualizado de las 3 clases (0: Falso, 1: Real, 2: Satírico)[cite: 1]
+    if clase_predicha == 1:
+        resultado = "REAL"
+    elif clase_predicha == 2:
+        resultado = "SATIRICO"
+    else:
+        resultado = "FALSO"
     
     return resultado, f"{confianza:.2%}", texto_combinado
 
