@@ -1,82 +1,109 @@
-# Fake News Detection Using a Language Model
+# 🕵️‍♂️ Spanish Fake News & Satire Detection System (BETO 3-Class)
 
-This project presents a solution using a Language Model for the detection of fake news in Spanish. The system is composed of two main phases:
+🌍 **[🇬🇧 English](#-english) | [🇪🇸 Español](#-español)**
 
-1.  **Model Training:** A Python script was created that unifies multiple news corpora in Spanish, calibrates hyperparameters, and trains a language model with a GPU and `DistilBERT` for text classification.
-2.  **Web Analysis Application:** A web application built with Flask and Docker that allows a user to enter the URL of a news article for the trained model to analyze and issue a real-time verdict.
+---
 
-## Project Description
+## 🇬🇧 English
 
-The objective of this research is to apply Natural Language Processing (NLP) and deep learning techniques to build a tool capable of discerning between real and fake news. The process includes data collection and unification, fine-tuning of a pre-trained Transformer model, and the implementation of an interactive web application for practical use.
+This repository contains the official implementation of the misinformation detection system described in the paper: *"Systematic Fine-Tuning of Transformer Models for Domain-Specific Misinformation Detection in Spanish Social Media Text"*.
 
-## System Architecture
+The system leverages a heavily regularized **BETO (Spanish BERT)** model fine-tuned on a 61,674-article unified corpus to classify Spanish news into three distinct categories: **Real, Fake, and Satire**.
 
-### Components Diagram
-<img width="1716" height="1076" alt="image" src="https://github.com/user-attachments/assets/1541ba6f-0ea5-4eee-9823-f9f405c17255" />
+### 🔬 System Architecture
 
-The system consists of three main components:
-- **Web Interface (Flask):** Handles user requests and displays results
-- **Text Processor:** Extracts and preprocesses text from news URLs
-- **Classification Model (DistilBERT):** Analyzes the text and predicts authenticity
+The application is deployed using a containerized microservices architecture (Docker), effectively decoupling the web scraping pipeline, the deep learning inference engine, and the user interface.
 
-### Sequence Diagram
+| Component Diagram | Sequence Diagram |
+|---|---|
+| <img loading="lazy" src="https://github.com/user-attachments/assets/5290769d-5839-4920-b6c1-1cc1d99585af" alt="System Component Diagram" width="450"/> | <img loading="lazy" src="https://github.com/user-attachments/assets/3cc2f77d-a103-47cf-b1e2-5966d635d195" alt="Inference Sequence Diagram" width="450"/> |
 
-<img width="1477" height="1290" alt="image" src="https://github.com/user-attachments/assets/9e0946fe-37a8-408b-acf9-b2fdc2f39a97" />
+### 🚀 Installation & Deployment
 
-The diagram above illustrates the complete flow from when a user submits a URL until they receive the classification result, showing the interaction between all system components.
+The deployment pipeline is designed to be model-agnostic and environment-independent.
 
-## Related Repository
+**Prerequisites:**
+* Docker & Docker Compose
 
-For the complete model training process, dataset preparation, and hyperparameter tuning, please visit the training repository:
-
-**🔗 [Spanish Fake News Detection - Training](https://github.com/gabrielhuav/Spanish-Fake-News-Detection-Training)**
-
-This repository contains:
-- Data collection and preprocessing scripts
-- Model training pipeline with KerasTuner
-- Evaluation metrics and visualizations
-- Dataset unification from multiple Spanish news corpora
-
-## Features
-
-* **Corpus Unification:** Consolidates multiple news datasets in Spanish into a single clean and standardized corpus.
-* **Multilingual Model:** Uses `distilbert-base-multilingual-cased`, a powerful and efficient model capable of understanding multiple languages.
-* **Hyperparameter Calibration:** Employs `KerasTuner` to find the optimal model configuration, maximizing its performance.
-* **Robust Evaluation:** Splits the data into training (80%), validation (10%), and testing (10%) sets for an unbiased evaluation of the model.
-* **Complete Metrics:** Generates a detailed report with Accuracy, Precision, Recall, and F1-Score.
-* **Results Visualization:** Creates learning curve graphs and a confusion matrix for a visual analysis of performance.
-* **Interactive Web Application:** A simple web interface where you can paste a URL to get an instant analysis.
-* **Containerization with Docker:** The entire project is dockerized, ensuring easy and reproducible execution on any system.
-
-## Technologies Used
-
-* **Language:** Python 3.8
-* **Machine Learning:** TensorFlow 2.4, Transformers (Hugging Face), KerasTuner, Scikit-learn
-* **Data Processing:** Pandas, NumPy
-* **Web Framework:** Flask
-* **Containerization:** Docker, Docker Compose
-* **Visualization:** Matplotlib, Seaborn
-
-## Project Structure
+**1. Clone the repository**
+```bash
+git clone [https://github.com/gabrielhuav/spanish-fake-news-detection-web-app.git](https://github.com/gabrielhuav/spanish-fake-news-detection-web-app.git)
+cd spanish-fake-news-detection-web-app/inference_service
 ```
-.
-├── app/
-│   ├── main.py                      # The Flask application
-│   ├── templates/
-│   │   └── index.html               # The user interface
-│   │
-│   └── modelo_final_distilbert_es/  # Your saved model and tokenizer
-│       ├── tf_model.h5
-│       ├── config.json
-│       ├── tokenizer.json
-│       ├── vocab.txt
-│       └── ...                      # Other model files
-│
-├── images/                          # Documentation images
-│   ├── components-diagram.png
-│   └── sequence-diagram.png
-│
-├── Dockerfile                       # The recipe to build the container
-├── docker-compose.yml               # The orchestrator to run the app
-└── requirements.txt                 # The list of Python dependencies
+
+**2. Download Model Weights**
+Due to file size constraints, the optimized TensorFlow weights (`tf_model.h5` ~500MB) are hosted externally. Download the model artifacts and place them in `app/models/beto_v11_3_classes/`.
+
+> 🔗 **[Download Pre-trained Model Weights (.h5) via Google Drive](https://drive.google.com/file/d/1teOuTTb_4QuFbroBzzmdUH_PHFcy_EOF/view?usp=sharing)**
+
+**3. Run the Container**
+```bash
+docker-compose up --build -d
 ```
+The web interface will be accessible at `http://localhost:5000`.
+
+### 📊 Detection Use Cases
+
+By isolating satirical content from malicious fake news, the model achieves a 1.0 F1-score on satire, preventing stylistic confounding.
+
+| Real News Case | Fake News Case |
+|---|---|
+| <img loading="lazy" src="https://github.com/user-attachments/assets/32d53636-6023-4164-a1c1-9d438daf3a20" alt="Real News Detection" width="400"/><br><br>🔗 **Source:** [View Article](https://heraldodemexico.com.mx/nacional/2026/5/6/bts-estara-en-palacio-nacional-asi-lo-anuncio-sheinbaum-en-la-mananera-807807.html) | <img loading="lazy" src="https://github.com/user-attachments/assets/355daeca-f4d2-407f-a247-a0e113e3e3ab" alt="Fake News Detection" width="400"/><br><br>🔗 **Source:** [View Article](https://www.servimedia.es/noticias/bng-ira-toma-posesion-sheinbaum-defiende-no-invite-rey/1410263836) |
+
+| Satirical Content Case |
+|---|
+| <img loading="lazy" src="https://github.com/user-attachments/assets/7406e584-89b8-4e12-af1b-a25179863987" alt="Satire Detection" width="800"/><br><br>🔗 **Source:** [View Article](https://eldeforma.com/2026/01/20/ice-vehiculos-vandalizados-hondurenos-mexicanos/) |
+
+---
+<br>
+
+## 🇪🇸 Español
+
+Este repositorio contiene la implementación oficial del sistema de detección de desinformación descrito en el artículo: *"Systematic Fine-Tuning of Transformer Models for Domain-Specific Misinformation Detection in Spanish Social Media Text"*.
+
+El sistema utiliza un modelo **BETO (Spanish BERT)** con regularización agresiva, ajustado sobre un corpus unificado de 61,674 artículos para clasificar noticias en español en tres categorías: **Real, Falsa y Satírica**.
+
+### 🔬 Arquitectura del Sistema
+
+La aplicación se despliega mediante una arquitectura de microservicios en contenedores (Docker), desacoplando el pipeline de web scraping, el motor de inferencia de Deep Learning y la interfaz de usuario.
+
+| Diagrama de Componentes | Diagrama de Secuencias |
+|---|---|
+| <img loading="lazy" src="https://github.com/user-attachments/assets/5290769d-5839-4920-b6c1-1cc1d99585af" alt="System Component Diagram" width="450"/> | <img loading="lazy" src="https://github.com/user-attachments/assets/3cc2f77d-a103-47cf-b1e2-5966d635d195" alt="Inference Sequence Diagram" width="450"/> |
+
+### 🚀 Instalación y Despliegue
+
+El pipeline de despliegue está diseñado para ser independiente del entorno y agnóstico al modelo.
+
+**Requisitos previos:**
+* Docker y Docker Compose
+
+**1. Clonar el repositorio**
+```bash
+git clone [https://github.com/gabrielhuav/spanish-fake-news-detection-web-app.git](https://github.com/gabrielhuav/spanish-fake-news-detection-web-app.git)
+cd spanish-fake-news-detection-web-app/inference_service
+```
+
+**2. Descargar los Pesos del Modelo**
+Debido a las restricciones de tamaño, los pesos de TensorFlow optimizados (`tf_model.h5` ~500MB) están alojados externamente. Descarga los artefactos del modelo y colócalos en `app/models/beto_v11_3_classes/`.
+
+> 🔗 **[Descargar Pesos del Modelo (.h5) vía Google Drive](https://drive.google.com/file/d/1teOuTTb_4QuFbroBzzmdUH_PHFcy_EOF/view?usp=sharing)**
+
+**3. Ejecutar el Contenedor**
+```bash
+docker-compose up --build -d
+```
+La interfaz web estará disponible en `http://localhost:5000`.
+
+### 📊 Casos de Uso y Detección
+
+Al aislar el contenido satírico de las noticias falsas maliciosas, el modelo alcanza un F1-score de 1.0 en sátira, evitando confusiones estilísticas.
+
+
+| Caso: Noticia Real | Caso: Noticia Falsa |
+|---|---|
+| <img loading="lazy" src="https://github.com/user-attachments/assets/32d53636-6023-4164-a1c1-9d438daf3a20" alt="Real News Detection" width="400"/><br><br>🔗 **Fuente:** [Consultar Artículo](https://heraldodemexico.com.mx/nacional/2026/5/6/bts-estara-en-palacio-nacional-asi-lo-anuncio-sheinbaum-en-la-mananera-807807.html) | <img loading="lazy" src="https://github.com/user-attachments/assets/355daeca-f4d2-407f-a247-a0e113e3e3ab" alt="Fake News Detection" width="400"/><br><br>🔗 **Fuente:** [Consultar Artículo](https://www.servimedia.es/noticias/bng-ira-toma-posesion-sheinbaum-defiende-no-invite-rey/1410263836) |
+
+| Caso: Contenido Satírico |
+|---|
+| <img loading="lazy" src="https://github.com/user-attachments/assets/7406e584-89b8-4e12-af1b-a25179863987" alt="Satire Detection" width="800"/><br><br>🔗 **Fuente** [Consultar Artículo](https://eldeforma.com/2026/01/20/ice-vehiculos-vandalizados-hondurenos-mexicanos/) |
